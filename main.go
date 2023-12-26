@@ -3,13 +3,12 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"gorm.io/gorm"
 	"io"
 	"log"
 	"net"
 	"sync"
 	"time"
-
-	_ "modernc.org/sqlite"
 )
 
 func initializeDatabase(db *sql.DB) error {
@@ -27,6 +26,8 @@ func initializeDatabase(db *sql.DB) error {
 	`)
 	return err
 }
+
+var db *gorm.DB
 
 func main() {
 	db, err := sql.Open("sqlite", "./.port_forwarding.db")
