@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 func initializeDatabase(db *sql.DB) error {
@@ -29,7 +29,7 @@ func initializeDatabase(db *sql.DB) error {
 }
 
 func main() {
-	db, err := sql.Open("sqlite3", "./.port_forwarding.db")
+	db, err := sql.Open("sqlite", "./.port_forwarding.db")
 	if err != nil {
 		log.Fatal(err)
 	}
