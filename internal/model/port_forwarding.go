@@ -1,8 +1,8 @@
 package model
 
-type port_forwarding struct {
+type PortForwarding struct {
 	ID         uint   `json:"id" gorm:"primaryKey"`
-	ListenPort uint   `json:"listenPort" gorm:"unique" binding:"require"`
-	TargetIp   string `json:"targetIp" binding:"require"`
-	TargetPort uint   `json:"targetPort" binding:"require"`
+	ListenPort uint   `json:"listenPort" gorm:"unique" binding:"required"`
+	TargetIp   string `json:"targetIp" binding:"required"`
+	TargetPort uint   `json:"targetPort" binding:"required"`
 }
