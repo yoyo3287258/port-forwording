@@ -31,5 +31,5 @@ func addHandler(c *gin.Context) {
 func listHandler(c *gin.Context) {
 	var pfList []model.PortForwarding
 	common.DB.Find(&pfList)
-	c.JSON(200, gin.H{"data": pfList})
+	c.JSON(200, gin.H{"code": 0, "data": pfList, "count": len(pfList)})
 }

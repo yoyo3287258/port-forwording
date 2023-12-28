@@ -1,9 +1,28 @@
-<html lang="UTF-8">
-
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quick Start - Layui</title>
+    <link crossorigin="anonymous" integrity="sha512-e1HY7nfutl+w3Hl0d32sUDXsUnp2QO4bk4IEwiqHaUCNYCI/vTyqP1Os6kgx6MWv98+qHUKSz3fiQtrShgUMbQ==" href="https://lib.baomitu.com/layui/2.9.2/css/layui.min.css" rel="stylesheet">
+</head>
 <body>
+<!-- HTML Content -->
+<script crossorigin="anonymous" integrity="sha512-sa9JSuXHk65X93PcJcYqSYfkRa+PRRHIFo/VzvrAonbA3JjEwb24O+49JpqWUQUXJQtaVgq7G0oF/byiNODZag==" src="https://lib.baomitu.com/layui/2.9.2/layui.min.js"></script>
 
-<h4>port forwarding</h4>
-
+<div class="layui-panel">
+    <div style="padding: 32px;">端口映射</div>
+    <hr>
+    <table class="layui-table" lay-data="{height:315, url:'/portForward/list'}" id="ID-table-demo-init">
+        <thead>
+        <tr>
+            <th lay-options="{field:'id', sort: true}">ID</th>
+            <th lay-options="{field:'listenPort' }">监听端口</th>
+            <th lay-options="{field:'targetIp'}">转发ip</th>
+            <th lay-options="{field:'targetPort'}">转发端口</th>
+        </tr>
+        </thead>
+    </table>
+</div>
 </body>
-
 </html>
