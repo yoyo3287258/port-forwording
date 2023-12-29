@@ -11,18 +11,134 @@
 <script crossorigin="anonymous" integrity="sha512-sa9JSuXHk65X93PcJcYqSYfkRa+PRRHIFo/VzvrAonbA3JjEwb24O+49JpqWUQUXJQtaVgq7G0oF/byiNODZag==" src="https://lib.baomitu.com/layui/2.9.2/layui.min.js"></script>
 
 <div class="layui-panel">
-    <div style="padding: 32px;">端口映射</div>
+    <H3>端口映射</H3>
     <hr>
-    <table class="layui-table" lay-data="{height:315, url:'/portForward/list'}" id="ID-table-demo-init">
+    <table class="layui-table" lay-data="{id: 'pf-list',height:515, url:'/portForward/list',toolbar: '#table-list-toolbar'}" id="pf-list">
         <thead>
         <tr>
             <th lay-options="{field:'id', sort: true}">ID</th>
             <th lay-options="{field:'listenPort' }">监听端口</th>
             <th lay-options="{field:'targetIp'}">转发ip</th>
             <th lay-options="{field:'targetPort'}">转发端口</th>
+            <th lay-options="{field:'remark'}">说明</th>
+            <th lay-options="{toolbar:'#row-delete'}">操作</th>
         </tr>
         </thead>
     </table>
+    <script type="text/html" id="table-list-toolbar">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm" lay-on="add-page">添加</button>
+        </div>
+    </script>
+
+    <script type="text/html" id="row-delete">
+        <div class="layui-clear-space">
+            <a class="layui-btn layui-btn-xs" lay-event="del">删除</a>
+        </div>
+    </script>
+
+    <script>
+        layui.use(function(){
+            var $ = layui.$;
+            var layer = layui.layer;
+            var util = layui.util;
+            var form = layui.form;
+            var table = layui.table;
+            table.on('tool(pf-list)', function (obj) {
+                var data = obj.data; // 得到当前行数据
+                var layEvent = obj.event;
+                if(layEvent === 'del') { //删除
+                    $.ajax({
+                       url: '/portForward/del' ,
+                        type: 'DELETE',
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        success: function (res) {
+                            if (res.code == 200) {
+                                table.reloadData('pf-list');
+                                layer.msg("删除成功");
+                            }else {
+                                layer.msg("删除失败");
+                            }
+                        },
+                    });
+                }
+            });
+            // 事件
+            util.on('lay-on', {
+                'add-page': function(){
+                    var d = layer.open({
+                        type: 1,
+                        area: ['640px','450px'],
+                        resize: false,
+                        // shadeClose: true,
+                        title: '添加端口转发',
+                        content: `
+          <div class="layui-form layui-form-pane" lay-filter="filter-add" style="margin: 16px;">
+              <div class="layui-form-item">
+                <label class="layui-form-label">监听端口</label>
+                <div class="layui-input-block">
+                  <input type="number" lay-affix="number" name="listenPort" placeholder="6700-6900"
+                  min="6700" max="6900" class="layui-input" lay-verify="required">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">转发IP</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="targetIp" lay-verify="required|ip"
+                     placeholder="xxx.xxx.xxx.xxx" >
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">转发端口</label>
+                <div class="layui-input-block">
+                  <input type="number" lay-affix="number" name="targetPort" placeholder="6700-6900"
+                  class="layui-input" lay-verify="required">
+                </div>
+              </div>
+              <div class="layui-form-item">
+                <label class="layui-form-label">说明</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="remark" lay-verify="required">
+                </div>
+              </div>
+              <hr>
+              <button class="layui-btn" lay-submit lay-filter="filter-add">提交</button>
+          </div>
+
+        `,
+                        success: function(){
+                            // 对弹层中的表单进行初始化渲染
+                            form.render();
+                            form.verify({
+                                // 验证ip地址，且为必填项
+                                ip: function(value, elem){
+                                    if (!new RegExp("^((\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.){3}(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])$").test(value)) {
+                                        return 'ip地址不合法';
+                                    }
+                                }
+                            });
+                            form.on('submit(filter-add)', function(data){
+                                var field = data.field; // 获取表单字段值
+                                layer.msg(JSON.stringify(field))
+                                $.post("/portForward/add", field, function (res) {
+                                    // console.log(res)
+                                    if (res.code == 200) {
+                                        layer.msg("添加成功")
+                                    }else {
+                                        layer.msg("添加失败")
+                                    }
+                                });
+                                table.reloadData('pf-list')
+                                layer.close(d)
+                                return false;
+                            });
+                        }
+                    });
+                }
+            })
+        });
+    </script>
 </div>
 </body>
 </html>

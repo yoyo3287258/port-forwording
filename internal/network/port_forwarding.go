@@ -10,6 +10,8 @@ import (
 	"sync"
 )
 
+var listenerHolder = make(map[uint]net.Listener)
+
 func init() {
 	Init()
 }
@@ -32,6 +34,7 @@ func Create(listenPort uint, targetIP string, targetPort uint) {
 	serverAddr := fmt.Sprintf("%s:%d", targetIP, targetPort)
 
 	listener, err := net.Listen("tcp", localAddr)
+	listenerHolder[listenPort] = listener
 	if err != nil {
 		fmt.Println("Error listening:", err)
 		return
@@ -49,7 +52,7 @@ func Create(listenPort uint, targetIP string, targetPort uint) {
 		clientConn, err := listener.Accept()
 		if err != nil {
 			fmt.Println("Error accepting connection:", err)
-			continue
+			return
 		}
 
 		go handleConnection(clientConn, serverAddr)
@@ -68,7 +71,7 @@ func handleConnection(clientConn net.Conn, serverAddr string) {
 
 	// 启动两个goroutine，分别将客户端的数据转发到服务器，将服务器的数据转发到客户端
 	var wg sync.WaitGroup
-	wg.Add(2)
+	wg.Add(1)
 
 	go func() {
 		defer wg.Done()
@@ -87,5 +90,14 @@ func copyData(dst io.Writer, src io.Reader) {
 	_, err := io.Copy(dst, src)
 	if err != nil {
 		fmt.Println("Error copying data:", err)
+	}
+}
+
+func Stop(listenerPort uint) {
+	listener := listenerHolder[listenerPort]
+	err := listener.Close()
+	if err != nil {
+		fmt.Println("Error Close listen:", err)
+		return
 	}
 }
