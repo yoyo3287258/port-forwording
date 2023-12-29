@@ -124,13 +124,13 @@
                                 $.post("/portForward/add", field, function (res) {
                                     // console.log(res)
                                     if (res.code == 200) {
+                                        table.reloadData('pf-list')
                                         layer.msg("添加成功")
                                     }else {
                                         layer.msg("添加失败")
                                     }
+                                    layer.close(d)
                                 });
-                                table.reloadData('pf-list')
-                                layer.close(d)
                                 return false;
                             });
                         }

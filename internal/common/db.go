@@ -1,7 +1,7 @@
 package common
 
 import (
-	"github.com/glebarez/sqlite"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"log"
 	"port-forwording/internal/model"
